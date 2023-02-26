@@ -38,7 +38,7 @@
           <template #button>
             <van-count-down
             v-if="isCountDownShow"
-            :time="1000 * 5"
+            :time="1000 * 60"
             format="ss s"
             @finish="isCountDownShow = false"
           />
@@ -114,8 +114,9 @@ export default {
       })
 
       try {
-        const res = await login(user)
-        console.log('登录成功', res)
+        const { data } = await login(user)
+        this.$store.commit('setUser', data.data)
+        console.log('登录成功', data)
         this.$toast.success('登录成功')
       } catch (err) {
         if (err.response.status === 400) {
