@@ -9,7 +9,7 @@
         route: 开启路由模式，路由模式下会匹配路径和标签的to属性，并自动选中标签
        -->
       <van-tabbar class="layout-tabbar" route>
-        <van-tabbar-item to="/">
+        <van-tabbar-item :to="{ name: 'home' }">
           <i slot="icon" class="toutiao toutiao-shouye"></i>
           <span class="text">首页</span>
         </van-tabbar-item>
