@@ -20,14 +20,7 @@
     通过swipeable属性可以开启滑动切换标签页
 -->
 <van-tabs class="channel-tabs" v-model="active" animated swipeable>
-    <van-tab title="标签 1">内容 1</van-tab>
-    <van-tab title="标签 2">内容 2</van-tab>
-    <van-tab title="标签 3">内容 3</van-tab>
-    <van-tab title="标签 4">内容 4</van-tab>
-    <van-tab title="标签 1">内容 1</van-tab>
-    <van-tab title="标签 2">内容 2</van-tab>
-    <van-tab title="标签 3">内容 3</van-tab>
-    <van-tab title="标签 4">内容 4</van-tab>
+    <van-tab v-for="channel in channels" :key="channel.id" :title="channel.name">{{ channel.name }}</van-tab>
     <div slot="nav-right" class="placeholder"></div>
     <div slot="nav-right" class="hamburger-btn">
         <i class="toutiao toutiao-gengduo"></i>
@@ -40,6 +33,8 @@
 
 <script>
 import { ref } from 'vue'
+import { getUserInfoChannels } from '@/api/user'
+
 export default {
   name: 'HomeIndex',
   setup() {
@@ -50,15 +45,27 @@ export default {
   props: {},
   data () {
     return {
-
+        channels: [] //4. 定义数据接收频道列表
     }
   },
   computed: {},
   watch: {},
-  created () {},
+  created () {
+    // 3. 调用获取频道列表
+    this.loadChannels()
+  },
   mounted () {},
   methods: {
-    
+    async loadChannels() {
+        try {
+            const { data } = await getUserInfoChannels()
+            console.log('获取用户信息列表成功', data)
+            this.channels = data.data.channels
+        } catch (err) {
+            console.log(err)
+            this.$toast('获取频道列表数据失败')
+        }
+    }
   }
 }
 </script>
