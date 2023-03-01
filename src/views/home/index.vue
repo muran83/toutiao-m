@@ -48,7 +48,9 @@
         <!-- 传递channels -->
         <channel-edit 
         :active="active" 
-        :my-channels="channels" />
+        :my-channels="channels" 
+        @update-active="onUpdateActive"
+        />
       </van-popup>
       <!-- /频道编辑 -->
 
@@ -67,15 +69,11 @@ export default {
   components: {
     ArticleList,
     ChannelEdit,
-    active: 0
-  },
-  setup() {
-    const active = ref(0)
-    return { active }
   },
   props: {},
   data () {
     return {
+        active: 0, // tab组件的选中依据
         channels: [], //4. 定义数据接收频道列表
         isChannelEditShow: false // 用来控制弹出层的显示/隐藏
     }
@@ -97,8 +95,12 @@ export default {
             console.log(err)
             this.$toast('获取频道列表数据失败')
         }
-    }
+    },
+    onUpdateActive (index) {
+    this.active = index
+    this.isChannelEditShow = false // 弹出层关闭
   }
+  },
 }
 </script>
 

@@ -2,7 +2,14 @@
     <div class="channel-edit">
       <van-cell :border="false">
          <div slot="title" class="title-text">我的频道</div>
-         <van-button class="edit-btn" size="mini" round type="danger" plain>编辑</van-button>
+         <van-button 
+         class="edit-btn" 
+         size="mini" 
+         round 
+         type="danger" 
+         plain
+         @click="isEdit = !isEdit"
+         >{{ isEdit ? '完成' :'编辑' }}</van-button>
       </van-cell>
       <!-- 我的频道 -->
       <van-grid class='my-grid' :gutter="10">
@@ -10,7 +17,15 @@
         class="grid-item"
         v-for="(channel, index) in myChannels"
         :key="index"
-        icon="clear">
+        icon="clear"
+        @click="onMyChannelClick(channel, index)"
+        >
+        <van-icon
+          v-show="isEdit && 
+          !fixedChannels.includes(channel.id)"
+          slot="icon"
+          name="clear"
+        ></van-icon>
          <span class="text" :class="{active: index === active }" slot="text">
             {{ channel.name }}
          </span>
@@ -24,10 +39,11 @@
     <van-grid class='recommend-grid' :gutter="10">
       <van-grid-item
         class="grid-item"
-        v-for="value in 8"
-        :key="value"
+        v-for="(channel, index) in recommendChannels"
+        :key="index"
         icon='plus'
-        text="文字"
+        :text="channel.name"
+        @click="onAddChannel(channel)"
       />
     </van-grid>
     <!-- /频道推荐 -->
@@ -36,6 +52,7 @@
   </template>
   
   <script>
+  import { getAllChannels } from '@/api/channel.js'
   export default {
     name: 'ChannelEdit',
     components: {},
@@ -50,13 +67,60 @@
         }
     },
     data () {
-      return {}
+      return {
+        allChannels: [], // 所有频道
+        isEdit: false,// 控制编辑状态的显示
+        fixedChannels: [0] // 固定频道的id，不允许删除
+
+      }
     },
-    computed: {},
+    computed: {
+        recommendChannels () {
+        const channels = []
+        // find 遍历数组， 找到满足条件的元素项，如果没找到则返回undefined,找到返回的是数组下标
+        // 先所有频道数组遍历，然后嵌套遍历，在我的数组中查找与正在遍历的当前元素相同的id
+        // 如果查不到，则返回的是undefine，证明此channel不在myChannel中，则在if中将其push进channels中
+        this.allChannels.forEach(channel => {
+            const ret = this.myChannels.find(myChannel =>{
+                return myChannel.id === channel.id
+            })
+            if(!ret) {
+              channels.push(channel)
+            }
+        })
+        return channels
+}
+
+    },
     watch: {},
-    created () {},
+    created () {
+        this.loadAllChannels()
+    },
     mounted () {},
-    methods: {}
+    methods: {
+        // 加载所有频道
+        async loadAllChannels () {
+            try {
+                const { data } = await getAllChannels()
+                this.allChannels = data.data.channels
+            } catch (err) {
+                console.log(err)
+                this.$toast("获取频道列表失败")
+            }
+        },
+        onAddChannel (channel) {
+            this.myChannels.push(channel)
+        },
+        onMyChannelClick(channel, index) {
+            if (this.isEdit) {
+                //编辑状态 删除频道
+            } else {
+                //非编辑状态，执行切换频道
+                this.$emit('update-active', index)
+            }
+        }
+
+    }
   }
   </script>
   
