@@ -30,11 +30,27 @@
       <!-- /频道的文章列表 -->
   </van-tab>
     <div slot="nav-right" class="placeholder"></div>
-    <div slot="nav-right" class="hamburger-btn">
+    <!-- 汉堡栏 -->
+    <div slot="nav-right" class="hamburger-btn" 
+      @click="isChannelEditShow = true">
         <i class="toutiao toutiao-gengduo"></i>
     </div>
 </van-tabs>
       <!-- /频道列表 -->
+      <!-- 频道编辑 -->
+      <van-popup
+        v-model="isChannelEditShow"
+        position="bottom"
+        :style="{ height: '100%' }"
+        closeable
+        close-icon-position="top-left"
+      >
+        <!-- 传递channels -->
+        <channel-edit 
+        :active="active" 
+        :my-channels="channels" />
+      </van-popup>
+      <!-- /频道编辑 -->
 
 
     </div>
@@ -44,20 +60,24 @@
 import { ref } from 'vue'
 import { getUserInfoChannels } from '@/api/user'
 import ArticleList from './components/article-list'
+import ChannelEdit from './components/channel-edit'
 
 export default {
   name: 'HomeIndex',
+  components: {
+    ArticleList,
+    ChannelEdit,
+    active: 0
+  },
   setup() {
     const active = ref(0)
     return { active }
   },
-  components: {
-    ArticleList
-  },
   props: {},
   data () {
     return {
-        channels: [] //4. 定义数据接收频道列表
+        channels: [], //4. 定义数据接收频道列表
+        isChannelEditShow: false // 用来控制弹出层的显示/隐藏
     }
   },
   computed: {},
