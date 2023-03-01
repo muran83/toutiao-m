@@ -96,7 +96,8 @@ export default {
             this.$toast('获取频道列表数据失败')
         }
     },
-    onUpdateActive (index) {
+    onUpdateActive (index, isChannelEditShow) {
+      // 更新激活的频道项
     this.active = index
     this.isChannelEditShow = false // 弹出层关闭
   }

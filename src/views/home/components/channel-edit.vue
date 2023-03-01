@@ -114,9 +114,18 @@
         onMyChannelClick(channel, index) {
             if (this.isEdit) {
                 //编辑状态 删除频道
+                this.myChannels.splice(index,1)
+                // 如果删除的激活频道之前的频道，则更新激活的频道项
+
+                // 参数1：要删除的元素的开始索引（包括）
+                // 参数2：删除的个数，如果不指定，则从参数1开始一直删除到最后
+                if (index <= this.active) {
+                    // 让激活频道的索引 - 1
+                    this.$emit('update-active', this.active - 1, true)
+                }
             } else {
                 //非编辑状态，执行切换频道
-                this.$emit('update-active', index)
+                this.$emit('update-active', index, false)
             }
         }
 
