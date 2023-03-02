@@ -18,7 +18,7 @@
         <div class="label-info-wrap">
           <span slot="label">{{ article.aut_name}}</span>
           <span slot="label">{{ article.comm_count}}条评论</span>
-          <span slot="label">{{ article.pubdate | relativeTime}}</span> <!-- relativeTime是过滤器-->>
+          <span slot="label">{{ article.pubdate | relativeTime}}</span> <!-- relativeTime是过滤器-->
         </div>
       </div>
       <!-- 一张图片的情况 -->

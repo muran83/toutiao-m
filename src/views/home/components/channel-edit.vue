@@ -52,7 +52,10 @@
   </template>
   
   <script>
-  import { getAllChannels } from '@/api/channel.js'
+  import { mapState } from 'vuex'
+  import { setItem } from '@/utils/storage.js'
+  import { getAllChannels, addUserChannel, deleteUserChannel } from '@/api/channel'
+
   export default {
     name: 'ChannelEdit',
     components: {},
@@ -89,8 +92,9 @@
             }
         })
         return channels
-}
-
+      },
+      // 获取user
+      ...mapState(['user'])
     },
     watch: {},
     created () {
@@ -108,13 +112,35 @@
                 this.$toast("获取频道列表失败")
             }
         },
-        onAddChannel (channel) {
+        // 点击添加频道
+       async onAddChannel (channel) {
             this.myChannels.push(channel)
+            if (this.user) {
+              // 已经登陆
+              try {
+                // 已登陆, 数据存储到线上
+                await addUserChannel({
+                  id: channel.id, // 频道 id
+                  seq: this.myChannels.length // 频道的序号
+                })
+                this.$toast('添加成功')
+              } catch (error) {
+                this.$toast('保存失败')
+              }
+            } else {
+              // 未登录
+              setItem('TOUTIAO_CHANNELS', this.myChannels)
+            }
         },
         onMyChannelClick(channel, index) {
             if (this.isEdit) {
+                // 如果是固定频道，则不删除
+                if (this.fixedChannels.includes(channel.id)) {
+                    // 后续代码不再执行
+                    return
+                }
                 //编辑状态 删除频道
-                this.myChannels.splice(index,1)
+                this.myChannels.splice(index, 1)
                 // 如果删除的激活频道之前的频道，则更新激活的频道项
 
                 // 参数1：要删除的元素的开始索引（包括）
@@ -123,6 +149,8 @@
                     // 让激活频道的索引 - 1
                     this.$emit('update-active', this.active - 1, true)
                 }
+                // 处理持久化
+                this.deleteChannel(channel)
             } else {
                 //非编辑状态，执行切换频道
                 this.$emit('update-active', index, false)
