@@ -48,6 +48,8 @@
   <script>
   import { getArticles } from '@/api/article'
   import ArticleItem from '@/components/article-item'
+import { deleteUserChannel } from '../../../api/channel'
+import { set } from 'vue'
 
   export default {
     name: 'ArticleList',
@@ -140,9 +142,23 @@
       console.log('上拉请求出错了，请稍后再试', err)
       this.refreshSuccessText = '刷新失败'
       this.isRefreshLoading = false
+     }
+   },
+   async deleteChannel (channel) {
+    try {
+      if (this.user) {
+        // 已经登录，将数据存储到线上
+        await deleteUserChannel(channel.id)
+      } else {
+        // 未登录，将数据存储到本地
+        setItem('TOUTIAO_CHANNELS',this.myChannels)
+      }
+    } catch (err) {
+      console.log(err)
+      this.$toast('删除频道失败，请稍后再试')
     }
-    }
-    }
+   }
+  }
   
   }
   </script>

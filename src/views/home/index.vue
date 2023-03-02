@@ -59,10 +59,11 @@
   </template>
 
 <script>
-import { ref } from 'vue'
 import { getUserInfoChannels } from '@/api/user'
 import ArticleList from './components/article-list'
 import ChannelEdit from './components/channel-edit'
+import { mapState } from 'vuex'
+import { getItem } from '@/utils/storage'
 
 export default {
   name: 'HomeIndex',
@@ -78,7 +79,10 @@ export default {
         isChannelEditShow: false // 用来控制弹出层的显示/隐藏
     }
   },
-  computed: {},
+  computed: {
+    // 映射为计算属性
+    ...mapState(['user'])
+  },
   watch: {},
   created () {
     // 3. 调用获取频道列表
@@ -88,9 +92,32 @@ export default {
   methods: {
     async loadChannels() {
         try {
+          let channels = []
+          // 直接获取本地数据
+          const localChannels = getItem('TOUTIAO_CHANNELS')
+          // 如果是登录状态 或者本地还没有存储 ，那么获取后端数据
+          if (this.user || !localChannels) {
+            // 已登录，请求获取线上数据
             const { data } = await getUserInfoChannels()
             console.log('获取用户信息列表成功', data)
-            this.channels = data.data.channels
+            channels = data.data.channels
+          } else {
+            // 未登录,直接拿本地的数据
+            // const localChannels = getItem('TOUTIAO_CHANNELS')
+            // 判断本地是否有数据？
+            // if(localChannels) {
+              // 如果本地有数据，则使用
+              // channels = localChannels
+            // } else {
+            //   // 没有本地数据，则请求获取默认推荐的频道列表
+            //   const { data } = await getUserInfoChannels()
+            //   console.log('获取用户信息列表成功', data)
+            //   channels = data.data.channels
+            // }
+            // 未登录并且本地有数据
+            channels = localChannels
+          }
+            this.channels = channels
         } catch (err) {
             console.log(err)
             this.$toast('获取频道列表数据失败')
