@@ -29,7 +29,11 @@
   <!-- /联想建议 -->
 
   <!-- 搜索历史记录 -->
-   <search-history v-else/>
+   <search-history 
+   :search-histories="searchHistories"
+   @search="onSearch"
+   v-else
+   />
   <!-- /搜索历史记录 -->
 
 
@@ -43,6 +47,7 @@
 import SearchHistory from './components/search-history'
 import SearchSuggestion from './components/search-suggestion'
 import SearchResult from './components/search-result'
+import { getItem, setItem } from '@/utils/storage'
 
 export default {
   // 组件名称
@@ -61,13 +66,16 @@ export default {
         searchText: '', // 搜索框的输入内容
         isResultShow: false, // 用于展示搜索结果
         searchHistories: [], //存储搜索历史记录
+        searchHistories: getItem('TOUTIAO_SEARCH_HISTORY') || []
     }
   },
   // 计算属性
   computed: {},
   // 侦听器
   watch: {
-    
+    searchHistories (val) {
+        setItem('TOUTIAO_SEARCH_HISTORY', val) // 每次搜索历史改动，那么就将搜索历史存入本地存储
+      }
   },
   // 生命周期钩子   注：没用到的钩子请自行删除
   /**
@@ -83,11 +91,18 @@ export default {
   methods: {
     onSearch(val) {
       this. searchText = val
-      const index =this.searchHistories.indexOf(val)
-      if( index !== -1 ) {
-        // 索引不等于-1  说明该关键词已经存在于搜索历史记录里面，需要先删除
+      // 用findIndex的方法也可以
+      const index = this.searchHistories.findIndex(item => val === item)
+      if(index !== -1) {
         this.searchHistories.splice(index, 1)
       }
+      // 历史记录点击触发此处的搜索事件 
+
+      // const index =this.searchHistories.indexOf(val)
+      // if( index !== -1 ) {
+      //   // 索引不等于-1  说明该关键词已经存在于搜索历史记录里面，需要先删除
+      //   this.searchHistories.splice(index, 1)
+      // }
       this.searchHistories.unshift( val )
       this.isResultShow = true
     },
