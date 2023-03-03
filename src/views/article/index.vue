@@ -53,7 +53,10 @@
           <!-- /用户信息 -->
   
           <!-- 文章内容 -->
-          <div class="article-content" v-html="article.content"></div>
+          <div 
+          class="article-content markdown-body" 
+          v-html="article.content"
+          ></div>
           <van-divider>正文结束</van-divider>
         </div>
         <!-- /加载完成-文章详情 -->
@@ -69,7 +72,7 @@
         <div v-else class="error-wrap">
           <van-icon name="failure" />
           <p class="text">内容加载失败！</p>
-          <van-button class="retry-btn">点击重试</van-button>
+          <van-button @click="loadArticle" class="retry-btn">点击重试</van-button>
         </div>
         <!-- /加载失败：其它未知错误（例如网络原因或服务端异常） -->
       </div>
@@ -120,7 +123,8 @@
         }
         const { data } = await getArticleById(this.articleId)
         this.article = data.data
-        console.log(data,'12121121212121')
+        /****** */
+        console.log(data)
 
       } catch (err) {
         if (err.response && err.response.status === 404) {
@@ -137,6 +141,7 @@
   </script>
   
   <style scoped lang="less">
+@import './github-markdown.css';
   .article-container {
     .main-wrap {
       position: fixed;
