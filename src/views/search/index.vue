@@ -1,7 +1,7 @@
 <template>
     <!-- 搜索栏 -->
   <div class="search-container">
-    <form action="/">
+    <form class="search-form" action="/">
       <van-search
        v-model="searchText"
        show-action
@@ -14,13 +14,17 @@
   </form>
   <!-- /搜索栏 -->
     <!-- 搜索结果 -->
-    <search-result v-if="isResultShow"/>
+    <search-result 
+    v-if="isResultShow"
+    :searchText="searchText"
+    />
   <!-- /搜索结果 -->
 
     <!-- 联想建议 -->
     <search-suggestion 
       v-else-if="searchText"
       :search-text="searchText"
+      @search="onSearch"
     />
   <!-- /联想建议 -->
 
@@ -54,8 +58,9 @@ export default {
   // 组件状态值
   data () {
     return {
-        searchText: '',
-        isResultShow: false // 用于展示搜索结果
+        searchText: '', // 搜索框的输入内容
+        isResultShow: false, // 用于展示搜索结果
+        searchHistories: [], //存储搜索历史记录
     }
   },
   // 计算属性
@@ -77,6 +82,13 @@ export default {
   // 组件方法
   methods: {
     onSearch(val) {
+      this. searchText = val
+      const index =this.searchHistories.indexOf(val)
+      if( index !== -1 ) {
+        // 索引不等于-1  说明该关键词已经存在于搜索历史记录里面，需要先删除
+        this.searchHistories.splice(index, 1)
+      }
+      this.searchHistories.unshift( val )
       this.isResultShow = true
     },
     onCancel() {
@@ -88,8 +100,17 @@ export default {
 
 <style scoped lang="less">
   .search-container {
+    padding-top: 108px;
     .van-search__action {
         color: #fff;
     }
+    .search-form {
+      position: fixed;
+      left: 0;
+      top: 0;
+      right: 0;
+      z-index: 1;
+    }
   }
+
 </style>
