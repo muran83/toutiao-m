@@ -11,7 +11,7 @@
   
       <div class="main-wrap">
         <!-- 加载中 -->
-        <div class="loading-wrap">
+        <div v-if="loading" class="loading-wrap">
           <van-loading
             color="#3296fa"
             vertical
@@ -20,7 +20,7 @@
         <!-- /加载中 -->
   
         <!-- 加载完成-文章详情 -->
-        <div class="article-detail">
+        <div v-else-if="article.title" class="article-detail">
           <!-- 文章标题 -->
           <h1 class="article-title">{{ article.title }}</h1>
           <!-- /文章标题 -->
@@ -32,7 +32,7 @@
               slot="icon"
               round
               fit="cover"
-              src="https://img.yzcdn.cn/vant/cat.jpeg"
+              :src="article.aut_photo"
             />
             <div slot="title" class="user-name">{{ article.aut_name }}</div>
             <div slot="label" class="publish-date">{{ article.pubdate | relativeTime }}</div>
@@ -53,20 +53,20 @@
           <!-- /用户信息 -->
   
           <!-- 文章内容 -->
-          <div class="article-content">这是文章内容</div>
+          <div class="article-content" v-html="article.content"></div>
           <van-divider>正文结束</van-divider>
         </div>
         <!-- /加载完成-文章详情 -->
   
         <!-- 加载失败：404 -->
-        <div class="error-wrap">
+        <div v-else-if="errStatus === 404" class="error-wrap">
           <van-icon name="failure" />
           <p class="text">该资源不存在或已删除！</p>
         </div>
         <!-- /加载失败：404 -->
   
         <!-- 加载失败：其它未知错误（例如网络原因或服务端异常） -->
-        <div class="error-wrap">
+        <div v-else class="error-wrap">
           <van-icon name="failure" />
           <p class="text">内容加载失败！</p>
           <van-button class="retry-btn">点击重试</van-button>
@@ -100,7 +100,9 @@
     },
     data () {
       return {
-        article: {} // 文章详情 
+        article: {}, // 文章详情 
+        loading: true, // 定义点击进入文章时的加载状态
+        errStatus: 0, // 错误状态码
       }
     },
     computed: {},
@@ -111,14 +113,24 @@
     mounted () {},
     methods: {
      async loadArticle() {
+      this.loading = true // 每一次点击进入文章的时候都要开启loading
       try {
+        if (Math.random() > 0.5) {
+          JSON.parse('this is err test')
+        }
         const { data } = await getArticleById(this.articleId)
         this.article = data.data
         console.log(data,'12121121212121')
+
       } catch (err) {
+        if (err.response && err.response.status === 404) {
+            this.errStatus = 404
+        }
         this.$toast('获取文章失败')
         console.log('文章请求错误', err)
       }
+      // 请求无论成功或者失败都要修改loading的状态
+      this.loading = false
      }
     }
   }
