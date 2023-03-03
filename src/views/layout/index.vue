@@ -9,7 +9,7 @@
         route: 开启路由模式，路由模式下会匹配路径和标签的to属性，并自动选中标签
        -->
       <van-tabbar class="layout-tabbar" route>
-        <van-tabbar-item :to="{ name: 'home' }">
+        <van-tabbar-item :to="{ name: 'home' }"> <!-- 声明式导航完整性传参模式，如果有params参数，要在路由数组中进行配置,例如：/article/:articleId , 使用例子：router-link :to= {name：'',params:{ articleId: xxx}} -->
           <i slot="icon" class="toutiao toutiao-shouye"></i>
           <span class="text">首页</span>
         </van-tabbar-item>

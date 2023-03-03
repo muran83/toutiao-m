@@ -100,7 +100,7 @@ export default {
           if (this.user || !localChannels) {
             // 已登录，请求获取线上数据
             const { data } = await getUserInfoChannels()
-            console.log('获取用户信息列表成功', data)
+            // console.log('获取用户信息列表成功', data)
             channels = data.data.channels
           } else {
             // 未登录,直接拿本地的数据

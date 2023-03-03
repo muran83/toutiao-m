@@ -46,7 +46,7 @@
       async loadSearchSuggestions (q) {
         try {
           const { data } = await searchSuggestions(q)
-          console.log(data,'搜索联想建议')
+          // console.log(data,'搜索联想建议')
           this.suggestions = data.data.options
         } catch (err) {
           this.$toast('获取搜索建议失败，请稍后再试')

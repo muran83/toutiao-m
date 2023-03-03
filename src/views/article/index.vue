@@ -22,7 +22,7 @@
         <!-- 加载完成-文章详情 -->
         <div class="article-detail">
           <!-- 文章标题 -->
-          <h1 class="article-title">这是文章标题</h1>
+          <h1 class="article-title">{{ article.title }}</h1>
           <!-- /文章标题 -->
   
           <!-- 用户信息 -->
@@ -34,8 +34,8 @@
               fit="cover"
               src="https://img.yzcdn.cn/vant/cat.jpeg"
             />
-            <div slot="title" class="user-name">黑马头条号</div>
-            <div slot="label" class="publish-date">14小时前</div>
+            <div slot="title" class="user-name">{{ article.aut_name }}</div>
+            <div slot="label" class="publish-date">{{ article.pubdate | relativeTime }}</div>
             <van-button
               class="follow-btn"
               type="info"
@@ -78,7 +78,7 @@
      <div class="article-bottom">
         <van-button class="comment-btn" type="default" round size="small">写评论
         </van-button>
-        <van-icon class="comment-icon" name="comment-o" info="123" />
+        <van-icon class="comment-icon" name="comment-o" badge="123" />
         <van-button class="btn-item" icon="star-o" />
         <van-button class="btn-item" icon="good-job-o" />
         <van-icon name="share" color="#777777"></van-icon>
@@ -88,6 +88,7 @@
   </template>
   
   <script>
+  import { getArticleById } from '@/api/article'
   export default {
     name: 'ArticleIndex',
     components: {},
@@ -98,13 +99,28 @@
       }
     },
     data () {
-      return {}
+      return {
+        article: {} // 文章详情 
+      }
     },
     computed: {},
     watch: {},
-    created () {},
+    created () {
+      this.loadArticle()
+    },
     mounted () {},
-    methods: {}
+    methods: {
+     async loadArticle() {
+      try {
+        const { data } = await getArticleById(this.articleId)
+        this.article = data.data
+        console.log(data,'12121121212121')
+      } catch (err) {
+        this.$toast('获取文章失败')
+        console.log('文章请求错误', err)
+      }
+     }
+    }
   }
   </script>
   
