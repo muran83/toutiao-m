@@ -26,7 +26,7 @@
           <!-- /文章标题 -->
   
           <!-- 用户信息 -->
-          <van-cell class="user-info" center :border="false">
+          <van-cell  class="user-info" center :border="false">
             <van-image
               class="avatar"
               slot="icon"
@@ -37,6 +37,13 @@
             <div slot="title" class="user-name">{{ article.aut_name }}</div>
             <div slot="label" class="publish-date">{{ article.pubdate | relativeTime }}</div>
             <van-button
+            v-if="article.is_followed"
+              class="follow-btn"
+              round
+              size="small"
+            >已关注</van-button>
+            <van-button
+            v-else
               class="follow-btn"
               type="info"
               color="#3296fa"
@@ -44,16 +51,13 @@
               size="small"
               icon="plus"
             >关注</van-button>
-            <!-- <van-button
-              class="follow-btn"
-              round
-              size="small"
-            >已关注</van-button> -->
+
           </van-cell>
           <!-- /用户信息 -->
   
           <!-- 文章内容 -->
           <div 
+          ref="article-content"
           class="article-content markdown-body" 
           v-html="article.content"
           ></div>
@@ -92,6 +96,7 @@
   
   <script>
   import { getArticleById } from '@/api/article'
+  import { ImagePreview } from 'vant'
   export default {
     name: 'ArticleIndex',
     components: {},
@@ -118,15 +123,19 @@
      async loadArticle() {
       this.loading = true // 每一次点击进入文章的时候都要开启loading
       try {
-        if (Math.random() > 0.5) {
-          JSON.parse('this is err test')
-        }
+        // if (Math.random() > 0.5) {
+        //   JSON.parse('this is err test')
+        // }
         const { data } = await getArticleById(this.articleId)
         this.article = data.data
         /****** */
         console.log(data)
-
-      } catch (err) {
+        
+        // 当文章请求成功时，进行图片加载函数
+        // 数据驱动视图是异步的
+        setTimeout( () => this.previewImage(), 0)
+      } 
+      catch (err) {
         if (err.response && err.response.status === 404) {
             this.errStatus = 404
         }
@@ -134,10 +143,29 @@
         console.log('文章请求错误', err)
       }
       // 请求无论成功或者失败都要修改loading的状态
-      this.loading = false
-     }
-    }
+     this.loading = false
+    },
+    previewImage() {
+    // 1、 获取图片的DOM节点
+    const articleContent = this.$refs['article-content']
+    const imgs = articleContent.querySelectorAll('img')
+    // 2、创建一个装在图片src的空数组，遍历imgs图片节点，将src装载新数组当中
+    const images = []
+    imgs.forEach((img, index) => {
+      images.push(img.src)
+      // 3、给图片DOM添加点击事件，触发图片加载函数
+      img.onclick = () => {
+          ImagePreview({
+            // 预览的图片地址数组 注意：images属性名是固定的写法
+            images,
+            // 起始位置，从 0 开始
+            startPosition: index
+          })
+        }
+    })
+     },
   }
+}
   </script>
   
   <style scoped lang="less">

@@ -5,7 +5,7 @@ import axios from 'axios'
 import store from '@/store'
 
 const request = axios.create({
-  baseURL: 'http://toutiao.itheima.net' // 接口的基准路径
+  baseURL: 'http://toutiao.itheima.net', // 接口的基准路径
 })
 
 /**
