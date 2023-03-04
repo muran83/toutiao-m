@@ -27,6 +27,10 @@ export default {
   name: 'FollowUser',
   // 局部注册的组件
   components: {},
+  model: {
+    prop: 'isFollowed',
+    event: 'update-is_followed'
+  },
   // 组件参数 接收来自父组件的数据
   props: {
     isFollowed: {
@@ -73,7 +77,7 @@ export default {
           // this.article.is_followed = true
       }
         // 更新视图状态
-        this.$emit('update-is-followed', !this.isFollowed)
+        this.$emit('update-is_followed', !this.isFollowed)
     } catch (err) {
       console.log(err)
       let message = '操作失败，请重试！'
