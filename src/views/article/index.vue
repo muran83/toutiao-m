@@ -72,11 +72,17 @@
           v-html="article.content"
           ></div>
           <van-divider>正文结束</van-divider>
+          
+          <!-- 文章评论列表 -->
+          <!-- 评论组件位置 -->
+          <comment-list :source="article.art_id"/>
+
           <!-- 底部区域 -->
           <div class="article-bottom">
             <van-button class="comment-btn" type="default" round size="small">写评论
             </van-button>
             <van-icon class="comment-icon" name="comment-o" badge="123" />
+
             <!-- 组件位置 -->
             <collect-article class="btn-item" v-model="article.is_collected"  :articleId="article.art_id" />
             <!-- /组件位置 -->
@@ -113,12 +119,14 @@
   import FollowUser from '@/components/follow-user'
   import CollectArticle from '@/components/collect-article'
   import LikeArticle from '@/components/like-article'
+  import CommentList from '@/components/components/comment-list'
   export default {
     name: 'ArticleIndex',
     components: {
       FollowUser,
       CollectArticle,
-      LikeArticle
+      LikeArticle,
+      CommentList
     },
     props: {
       articleId: {

@@ -33,6 +33,7 @@
     methods: {
        async onCollect () {
         this.loading = true
+        let status = -1
         try {
             if(this.value) {
             // 如果已经收藏，那么取消
