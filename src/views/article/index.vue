@@ -72,16 +72,29 @@
           v-html="article.content"
           ></div>
           <van-divider>正文结束</van-divider>
-          
+
           <!-- 文章评论列表 -->
+
           <!-- 评论组件位置 -->
-          <comment-list :source="article.art_id"/>
+          <comment-list 
+          :source="article.art_id" 
+          :list="commentList"
+          @onload-success="totalCommentCount = $event.total_count"
+          @reply-click="onReplyClick"
+          
+          />
 
           <!-- 底部区域 -->
           <div class="article-bottom">
-            <van-button class="comment-btn" type="default" round size="small">写评论
+            <van-button 
+            class="comment-btn" 
+            type="default" 
+            round 
+            size="small"
+            @click="isPostShow = true"
+            >写评论
             </van-button>
-            <van-icon class="comment-icon" name="comment-o" badge="123" />
+            <van-icon class="comment-icon" name="comment-o" :badge="totalCommentCount" />
 
             <!-- 组件位置 -->
             <collect-article class="btn-item" v-model="article.is_collected"  :articleId="article.art_id" />
@@ -90,6 +103,30 @@
             <van-icon name="share" color="#777777"></van-icon>
           </div>
           <!-- /底部区域 -->
+
+          <!-- 弹出层的设置 -->
+          <!-- 发布文章评论 -->
+          <van-popup 
+          v-model="isPostShow" 
+          position="bottom" 
+          >
+          <comment-post 
+          :target="article.art_id"
+          @post-success="onPostSuccess"
+          />
+        </van-popup>
+        <!-- /发布文章评论 -->
+        <!-- 评论回复 -->
+        <van-popup
+          v-model="isReplyShow"
+          position="bottom"
+          style="height: 100%"
+          >
+          评论回复
+          <CommentReply />
+        </van-popup>
+        <!-- /评论回复 -->
+
         </div>
         <!-- /加载完成-文章详情 -->
   
@@ -119,14 +156,18 @@
   import FollowUser from '@/components/follow-user'
   import CollectArticle from '@/components/collect-article'
   import LikeArticle from '@/components/like-article'
-  import CommentList from '@/components/components/comment-list'
+  import CommentList from './components/comment-list'
+  import CommentPost from './components/comment-post'
+  import CommentReply from './components/comment-reply'
+
   export default {
     name: 'ArticleIndex',
     components: {
       FollowUser,
       CollectArticle,
       LikeArticle,
-      CommentList
+      CommentList,
+      CommentPost,
     },
     props: {
       articleId: {
@@ -140,6 +181,11 @@
         loading: true, // 定义点击进入文章时的加载状态
         errStatus: 0, // 错误状态码
         followLoading: false, 
+        totalCommentCount: 0, // 文章评论的总数 
+        isPostShow: false, // 弹出层的设置
+        commentList: [], // d8 8.3.4
+        isReplyShow: false, // 控制展示回复弹层的显示状态
+
       }
     },
     computed: {},
@@ -193,6 +239,20 @@
         }
     })
    },
+   onPostSuccess (data) {
+    // 关闭发布评论弹层
+    this.isPostShow = false
+    // 将发布内容显示到列表顶部
+    this.commentList.unshift(data.new_obj)
+    // 让评论数自加1
+    this.article.comm_count++
+  },
+  // 
+   onReplyClick (comment) {
+    console.log(comment)
+    // 显示评论回复弹出层
+    this.isReplyShow = true
+  },
    
   }
 }

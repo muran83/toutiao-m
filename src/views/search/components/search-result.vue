@@ -12,6 +12,12 @@
         v-for="(article, index) in list" 
         :key="index" 
         :title="article.title" 
+        :to="{
+          name: 'article',
+          params: {
+            articleId: article.art_id
+          }
+        }"
         
         />
       </van-list>

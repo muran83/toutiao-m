@@ -40,6 +40,7 @@
                 await deleteCollect(this.articleId)
             } else {
                 await addCollect(this.articleId)
+                status = 1
             }
             // 更新视图
             this.$emit('input', !this.value)

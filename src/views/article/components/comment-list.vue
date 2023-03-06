@@ -9,34 +9,49 @@
      error-text="加载失败，请点击重试"
      @load="onLoad"
     >
-    <van-cell v-for="(item, index) in list" :key="index" :title="item.content" />
+    <comment-item 
+    v-for="(item, index) in list" 
+    :key="index" 
+    :comment="item" 
+    @reply-click="$emit('reply-click', $event)"
+    />
     </van-list>
   </div>
 </template>
 
 <script>
 import { getComments } from '@/api/comment'
+import CommentItem from './comment-item.vue'
 export default {
   // 组件名称
   name: 'CommentList',
   // 局部注册的组件
-  components: {},
+  components: {
+    CommentItem
+  },
   // 组件参数 接收来自父组件的数据
   props: {
     source: {
         type: [String, Number, Object],
         required: true
+    },
+    list: {
+      type: Array,
+      required: true,
+      // default, 默认值, 如果是数组或者对象，需要通过函数的形式返回
+      default: () => []
     }
   },
   // 组件状态值
   data () {
     return {
-      list: [],
+      // list: [], // 文章的评论数组
       loading: false,
       finished: false,
       offset: null, // 获取下一页的数据
       limit: 10,
-      error: false
+      error: false,
+
     }
   },
   // 计算属性
@@ -47,7 +62,10 @@ export default {
   /**
   * 组件实例创建完成，属性已绑定，但DOM还未生成，el属性还不存在
   */
-  created () {},
+  created () {
+    // 页面一加载，就获取评论的数量
+    this.onLoad()
+  },
   /**
   * el 被新创建的 vm.el 替换，并挂载到实例上去之后调用该钩子。
   * 如果 root 实例挂载了一个文档内元素，当 mounted 被调用时 vm.el 也在文档内。
@@ -70,6 +88,8 @@ export default {
         this.list.push(...results)
        // 加载状态结束
        this.loading = false
+        // 将含有评论数量的数据传回父组件
+        this.$emit('onload-success', data.data)
        if(results.length) {
          // 有就去请求下一页的页码
             this.offset = data.data.last_id
