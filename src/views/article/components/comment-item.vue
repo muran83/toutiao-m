@@ -14,7 +14,7 @@
           :class="{
             liked: comment.is_liking
           }"
-          icon="comment.is_liking ? 'good-job' : 'good-job-o'"
+          :icon="comment.is_liking ? 'good-job' : 'good-job-o'"
           :loading="commentLoading"
           @click="onCommentLike"
           

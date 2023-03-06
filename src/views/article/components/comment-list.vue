@@ -40,6 +40,14 @@ export default {
       required: true,
       // default, 默认值, 如果是数组或者对象，需要通过函数的形式返回
       default: () => []
+    },
+    type: {
+      type: String,
+      // 自定义type参数，默认值为a， 取值范围只能是a或者c
+      validator (value) {
+        return ['a', 'c'].includes(value)
+      },
+      default: 'a'
     }
   },
   // 组件状态值
@@ -77,9 +85,10 @@ export default {
       // 1、异步更新数据
       try {
         const { data } = await getComments({
-            type: 'a', // 评论类型，a-对文章（article）的评论，c-对评论（comment）的回复
+            type: this.type, // 评论类型，a-对文章（article）的评论，c-对评论（comment）的回复
             source: this.source.toString(), // 源id，文章id或评论id(特别注意：需要手动加上toString()，否则会在source的值两边加上双引号，导致id不是一个有效的整形)
-            offset: this.offset, // 获取评论偏移量的数据，一开始为null
+            offset: this.offset,
+            limit: this.limit // 获取评论偏移量的数据，一开始为null
         })
         // console.log(data,'请求文章评论的数据显示')
         const { results } = data.data 
@@ -90,6 +99,7 @@ export default {
        this.loading = false
         // 将含有评论数量的数据传回父组件
         this.$emit('onload-success', data.data)
+        // console.log(data.data, '1212121111111111111')
        if(results.length) {
          // 有就去请求下一页的页码
             this.offset = data.data.last_id

@@ -120,10 +120,12 @@
         <van-popup
           v-model="isReplyShow"
           position="bottom"
-          style="height: 100%"
+          style="height: 80%"
           >
-          评论回复
-          <CommentReply />
+          <comment-reply 
+          :comment="currentComment"
+          @close="isReplyShow = false"
+          />
         </van-popup>
         <!-- /评论回复 -->
 
@@ -168,6 +170,7 @@
       LikeArticle,
       CommentList,
       CommentPost,
+      CommentReply,
     },
     props: {
       articleId: {
@@ -185,6 +188,8 @@
         isPostShow: false, // 弹出层的设置
         commentList: [], // d8 8.3.4
         isReplyShow: false, // 控制展示回复弹层的显示状态
+        currentComment: {}, // 点击回复的那个评论对象
+
 
       }
     },
@@ -204,8 +209,6 @@
         const { data } = await getArticleById(this.articleId)
         this.article = data.data
         /****** */
-        console.log(data)
-        
         // 当文章请求成功时，进行图片加载函数
         // 数据驱动视图是异步的
         setTimeout( () => this.previewImage(), 0)
@@ -251,6 +254,10 @@
    onReplyClick (comment) {
     console.log(comment)
     // 显示评论回复弹出层
+    this.isReplyShow = true
+    // 将子组件中传的当前评论对象存储到当前组件当中
+    this.currentComment = comment
+    // 展示评论回复弹层
     this.isReplyShow = true
   },
    
