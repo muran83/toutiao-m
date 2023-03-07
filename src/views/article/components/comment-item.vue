@@ -29,7 +29,7 @@
             class="reply-btn"
             round
             @click="$emit('reply-click', comment)"
-          >回复 {{ comment.replay_count }}</van-button>
+          >回复 {{ comment.reply_count }}</van-button>
         </div>
       </div>
     </van-cell>
@@ -48,7 +48,7 @@
     },
     data () {
       return {
-        commentLoading: false
+        commentLoading: false,
       }
     },
     computed: {},

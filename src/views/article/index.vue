@@ -116,13 +116,15 @@
           />
         </van-popup>
         <!-- /发布文章评论 -->
+
         <!-- 评论回复 -->
         <van-popup
           v-model="isReplyShow"
           position="bottom"
-          style="height: 80%"
+          style="height: 100%"
           >
           <comment-reply 
+          v-if="isReplyShow"
           :comment="currentComment"
           @close="isReplyShow = false"
           />
@@ -172,6 +174,11 @@
       CommentPost,
       CommentReply,
     },
+    provide: function () {
+    return {
+      articleId: this.articleId
+    }
+  },
     props: {
       articleId: {
         type: [Number, String],
@@ -189,8 +196,6 @@
         commentList: [], // d8 8.3.4
         isReplyShow: false, // 控制展示回复弹层的显示状态
         currentComment: {}, // 点击回复的那个评论对象
-
-
       }
     },
     computed: {},
