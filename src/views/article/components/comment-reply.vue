@@ -14,7 +14,8 @@
         <van-cell title="所有回复" />
         <comment-list
           :source="comment.com_id"
-          type="c"
+          :list="commentList" 
+          :type="c"
    	    />
          <!-- /评论的回复列表 -->
       </div>
@@ -28,11 +29,12 @@
           @click='isPostShow = true'>写评论</van-button>
         </div>
       <!-- /发布评论 -->
-      
+
       <!-- 发布评论的弹层，视频里面没有提到，自行补充 -->
       <van-popup v-model="isPostShow" position="bottom">
         <comment-post  
         :target="comment.com_id"
+        @post-success="onPostSuccess"
         />
       </van-popup>
     </div>
@@ -57,14 +59,26 @@
     },
     data () {
       return {
-        isPostShow: false
+        isPostShow: false,
+        commentList: [] // 评论的回复列表
       }
     },
     computed: {},
     watch: {},
     created () {},
     mounted () {},
-    methods: {}
+    methods: {
+      onPostSuccess(data) {
+        // 更新回复的数量
+        this.comment.reply_count++
+        // 关闭弹层
+        this.isPostShow = false
+        // 将最新的内容填充到头部
+        // console.log(this.commentList)
+        this.commentList.unshift(data.new_obj)
+
+      }
+    }
   }
   </script>
   

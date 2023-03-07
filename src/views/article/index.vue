@@ -257,7 +257,7 @@
   },
   // 
    onReplyClick (comment) {
-    console.log(comment)
+    // console.log(comment)
     // 显示评论回复弹出层
     this.isReplyShow = true
     // 将子组件中传的当前评论对象存储到当前组件当中

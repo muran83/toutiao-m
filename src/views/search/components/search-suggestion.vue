@@ -30,6 +30,9 @@
     computed: {},
     watch: {
       searchText: {
+        /**  handler(val){
+             console.log()
+      }*/
         // handler 的另一种写法
         handler: debounce (function(val) {
           this.loadSearchSuggestions(val)

@@ -41,7 +41,7 @@ export default {
     list: {
       type: Array,
       // default, 默认值, 如果是数组或者对象，需要通过函数的形式返回
-      default: () => []
+      default: () => [] // 如果没有传入数据，那么list = [], 如果传入数据了，那么按传入的数据
     },
     type: {
       type: String,
