@@ -19,27 +19,61 @@
         </van-cell>
         <van-cell 
         title="昵称" 
-        :value="user.name"  
-        is-link 
+        :value="user.name"
+        is-link
         @click="isUpdateShow = true"
         />
-        <van-cell title="性别" :value="user.gender === 0 ? '男' : '女' "   is-link />
-        <van-cell title="生日" :value="user.birthday"  is-link />
+        <van-cell 
+        title="性别" 
+        :value="user.gender === 0 ? '男' : '女' " 
+        is-link
+        @click="isGenderShow = true"
+        />
+        <van-cell 
+        title="生日" 
+        :value="user.birthday" 
+        is-link 
+        @click="isBirthdayShow = true " 
+         />
         <!-- /个人信息 -->
 
         <!-- 编辑昵称 -->
-        <van-popup 
+        <van-popup
         v-model="isUpdateShow" 
         style="height: 100%;"
         position="bottom"
         >
           <update-name 
-          @close="isUpdateShow = false"
+          v-if="isUpdateShow"
           v-model="user.name"
-          
+          @close="isUpdateShow = false"
           />
         </van-popup> 
         <!-- /编辑昵称 -->
+
+        <!-- 编辑性别 -->
+        <van-popup 
+        v-model="isGenderShow"
+        style="height: 100%;"
+        position="bottom"
+        >
+          <update-gender 
+          v-if="isGenderShow"
+          v-model="user.gender"
+          @close="isGenderShow = false"
+          />
+        </van-popup>
+        <!-- /编辑性别 -->
+
+        <!-- 编辑生日 -->
+        <van-popup 
+        v-model="isBirthdayShow"
+        style="height: 100%;"
+        position="bottom"
+        >
+        birthday
+        </van-popup>
+        <!-- /编辑生日 -->
 
     </div>
   </template>
@@ -47,6 +81,7 @@
   <script>
   import { getUserProfile } from '@/api/user'
   import UpdateName from './components/update-name'
+  import UpdateGender from './components/update-gender'
 
   export default {
     // 组件名称
@@ -54,6 +89,7 @@
     // 局部注册的组件
     components: {
         UpdateName,
+        UpdateGender,
     },
     // 组件参数 接收来自父组件的数据
     props: {},
@@ -62,6 +98,8 @@
       return {
         user: {}, // 用户的个人信息
         isUpdateShow: false, // 控制弹出层的状态
+        isGenderShow: false, // 控制性别弹出层的状态
+        isBirthdayShow: false, //控制生日弹出层的状态
 
       }
     },
