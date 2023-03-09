@@ -11,7 +11,7 @@
 		  -->
           <van-image
             class="avatar"
-            src="https://img.yzcdn.cn/vant/cat.jpeg"
+            :src="userInfo.photo"
             round
             fit="cover"
           />
